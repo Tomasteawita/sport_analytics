@@ -1,0 +1,42 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  jupyter_spark:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: tomasteawita_jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./docker_shared_folder/working_dir:/home/tomasteawita/working_dir
+    user: root
+    working_dir: /home/tomasteawita/working_dir
+    env_file:
+      - ./.env
+    environment:
+      NB_USER: tomasteawita
+      NB_GID: 1000
+      CHOWN_HOME: 'yes'
+      CHOWN_HOME_OPTS: '-R'
+      SPARK_CLASSPATH: '/home/tomasteawita/working_dir/spark_drivers/postgresql-42.5.2.jar'
+    networks:
+      - tomasteawita_network
+
+  postgres:
+    container_name: tomasteawita_postgres
+    image: 'postgres:15'
+    hostname: postgres_host
+    volumes:
+      - ./docker_shared_folder/postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5437:5435
+    command: "-p 5435"
+    env_file:
+      - ./.env
+    networks:
+      - tomasteawita_network
+
+networks:
+  tomasteawita_network:
