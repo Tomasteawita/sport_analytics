@@ -1,0 +1,307 @@
+---
+title: "Informe eficiencia de la planificación de Quality Training"
+author: "Cueva Tomas"
+date: "2024-03-30"
+output:
+  pdf_document: 
+    fig_width: 8
+    fig_height: 6
+  html_document: default
+---
+
+# Introducción
+
+Este informe se centra en un análisis exhaustivo del impacto del framework de planificación de entrenamiento de Quality Training. Exploraremos en detalle los elementos clave que contribuyen a la eficacia de este framework en el desarrollo de masa muscular y fuerza.
+
+Además, identificaremos áreas de mejora para obtener información adicional que pueda optimizar la toma de decisiones al seleccionar ejercicios y cargas para cada semana de entrenamiento. El objetivo es maximizar los resultados o garantizarlos, independientemente del individuo que busque orientación en su programa de entrenamiento, ya sea para mejorar su condición física funcional o estética.
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
+installed_pkgs <- installed.packages()
+installed_pkgs[,c("Package","Version")]
+```
+
+```{r install_packages, include=FALSE, warning=FALSE, message=FALSE,echo=FALSE}
+#install.packages("arules")
+#install.packages("arulesViz")
+#install.packages("dplyr")
+#install.packages("lubridate")
+#install.packages("ggplot2")
+#install.packages("gridExtra")
+#install.packages("stringr")
+#install.packages("tidyverse")
+#install.packages("readxl")
+#install.packages("TinyTex")
+#install.packages("MikTex")
+#install.packages("source")
+#install.packages('tinytex')
+#tinytex::install_tinytex()
+
+```
+
+```{r import.libraries, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+library(arules)
+library(arulesViz)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(stringr)
+library(tidyverse)
+library(readxl)
+library(gridExtra)
+```
+
+# Salud física, un problema arraigado en la humanidad
+
+Hay un aspecto fundamental en la vida de cada personas, uno el cual es parte de los tres problemas que siempre existieron y van a seguir existiendo para la humanidad. Que es el aspecto de la salud física.
+
+![](images/clipboard-116560589.png)
+
+Es interestante observar que, aunque haya muchísima información a lo largo y ancho del internet, y que además, la oferta de profesionales dedicados al área es considerablemente alta. Aún existe muchísimas personas que, aunque entrenen desde hace mucho tiempo, no logren alcanzar sus objetivos estéticos o funcionales.
+
+Si existe una amplia oferta de profesionales y además la información abunda para cualquier persona que desee informarse y generar sus propias rutinas o planes alimenticios.
+
+¿Por qué una persona que entrena y come bien, aún así no consigue los resultados que quiere conseguir?
+
+# El problema está en la planificación, los metodos y los sistemas
+
+La información está ahí afuera, pero el simple hecho de leerla, solo trae muchas piezas de un rompecabeza del cual no tenemos la foto para poder resolver.
+
+La cantidad de oferta de profesionales abunda, pero muchos no ofrecen un servicio con una metodología que sea efectiva para el caso particular de una persona.
+
+Cada individuo es único en sus gustos o condiciones, y es absolutamente específico en su anatomía y fisiología.
+
+```{r exploratory_analysis_read_data, include=FALSE, echo=FALSE}
+df_fatiga_rpe <- read_xlsx(
+  "./data/fatiga_rpe.xlsx",
+  "fatiga_rpe"
+  )
+
+df_comparacion_informes_pliegues <- read_xlsx(
+  "./data/comparacion_informes.xlsx",
+  "pliegues",
+)
+
+df_comparacion_informes_totales <- read_xlsx(
+  "./data/comparacion_informes.xlsx",
+  "totales",
+)
+
+df_alimentacion_enero <- read_xlsx(
+  "./data/Alimentacion.xlsx",
+  "Enero 2024"
+  
+)
+df_alimentacion_febrero <- read_xlsx(
+  "./data/Alimentacion.xlsx",
+  "Febrero 2024",
+)
+
+df_alimentacion_marzo <- read_xlsx(
+  "./data/Alimentacion.xlsx",
+  "Marzo 2024",
+)
+
+
+
+print('|------------+ fatiga_rpe Data Frame')
+glimpse(df_fatiga_rpe)
+
+print('|------------+ pliegues Data Frame')
+glimpse(df_comparacion_informes_pliegues)
+
+
+print('|------------+ totales Data Frame')
+glimpse(df_comparacion_informes_totales)
+
+glimpse(df_alimentacion_enero)
+glimpse(df_alimentacion_febrero)
+glimpse(df_alimentacion_marzo)
+
+```
+
+# La falta de planificación o mala planificación afecta a los más constantes.
+
+Hoy en día, abunda la cantidad de personas que entrena muchísimo, y sin embargo no logran los resultados que esperan. Principalmente por las siguiente razones:
+
+-   No entrenan lo suficientemete intensivo
+
+-   Entrenan muy intensivo y no le dan lugar al descanso
+
+En definitiva, en ninguno de los dos casos existe **Supercompensación:**
+
+![](images/clipboard-4108121586.png)
+
+Viendo el gráfico teórico de como funciona la supercompensación y teniendo en cuenta el primer caso, las personas que no entrenan lo suficientemente intensivo, es posible que no alcancen un nivel de supercompensación que les permite expermentar adaptaciones significativas en su rendimiento dado que el estímulo del entrenamiento es insuficiente para desencadenar adaptaciones.
+
+Por otro lado las personas que entrenan intensivo con una frecuencia alta, sin periodos de recuperación o "descarga" del cuerpo, no permiten que el cuerpo recupere lo suficiente para una supercompensación óptima. Dandole al cuerpo un nuevo estímulo en la fase de recuperación o fatiga, en lugar de darle el estímulo en la adaptación.
+
+# ¿Cómo viene Quality Training a resolver este problema?
+
+Con un profesional idoneo, con conocimientos actualizados, pensamiento crítico, una planilla de planificación y una de gestión de fatiga. Este problema de la supercompensación se resuelve re raíz.
+
+## Funcionamiento de las planillas. Resumen.
+
+El libro de calculo utilizado para la planificación online está fomado de 2 partes fundamentales;
+
+La planificación del entrenamiento con los ejercicios, dividido en dos hojas de cálculo, con 2 semanas de entrenamiento por cada hoja:
+
+![](images/clipboard-2601089141.png)
+
+En donde tenémos un índice clave para la gestión de la intensidad, que es el RPE (Índice de esfuerzo persibido por sus siglas en inglés).
+
+Por otro lado, tenémos la gestión de fatiga:
+
+![](images/clipboard-3042260620.png)
+
+En donde se monitorea la intensidad del entrenamiento con el RPE diarío de las 4 semanas de entrenamiento, y la fatiga utilizando 5 aspectos claves:
+
+-   Fatiga
+
+-   Calidad de sueño
+
+-   Daño muscular
+
+-   Nivel de stress
+
+-   Humor
+
+Con un puntaje total con la suma de estos 5 puntos.
+
+# Resultados de la planilla para un personaje constante, poca planificación y mucha intensidad
+
+Los datos utilizados provienen del monitoreo constante de un individuo con los siguientes antecedentes:
+
+-   Acostumbrado al entrenamiento intenso.
+
+-   Practicó deporte desde temprana edad, manteniendo la constancia hasta la actualidad.
+
+-   Conocimientos básicos de entrenamiento de fuerza, hipertrófica y natación.
+
+Estos antecedentes, junto con una dieta hipocalórica, llevaron a que la persona entrenara con poca planificación por un periodo de tiempo longevo, el cual le permitieron alcanzar los siguientes resultados en su composición corporal:
+
+![](images/clipboard-4212020504.png)
+
+> Datos obtenidos de la antrompometría ISAK deportiva para el día de la fecha 23/01/2024
+
+Y estos fueron los resultados posteriormente a la adecuada planificación con Quality Training:
+
+![](images/clipboard-282635273.png)
+
+> Datos obtenidos de la antrompometría ISAK deportiva para el día de la fecha 16/03/2024
+
+Con una perdida de 1,176 kilos de masa adiposa y una ganancia de 0.775 kilos de masa muscular.
+
+¿Qué factores del entrenamiento permitieron una ganancia de masa muscular?
+
+# Equilibro entre Intensidad y Recuperación
+
+El equilibrio entre intensidad y recuperación lo podemos ver en la oscilación entre la fatiga muscular (daño muscular + fatiga) y la fatiga de fuerza de voluntad (sueño + humor + stress), junto con el RPE diario.
+
+```{r transform_training, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+df_fatiga_rpe <- na.omit(df_fatiga_rpe) %>% 
+  mutate(
+    Fecha = as.Date(Fecha),
+    fatiga_muscular = danio_muscular + fatiga,
+    fatiga_nerviosa = humor + stress + suenio,
+  )
+
+
+
+
+df_fatigas <- df_fatiga_rpe %>% 
+  select(
+    Fecha,
+    suenio,
+    fatiga,
+    stress,
+    humor,
+    danio_muscular
+  )
+
+df_fatiga_total <- df_fatiga_rpe %>% 
+  select(
+    Fecha,
+    puntos_de_fatiga
+  )
+
+df_fatiga_muscular <- df_fatiga_rpe %>% 
+  select(
+    Fecha,
+    fatiga_muscular,
+  )
+
+df_fatiga_nerviosa <- df_fatiga_rpe %>% 
+  select(
+    Fecha,
+    fatiga_nerviosa
+  )
+
+df_rpe <- df_fatiga_rpe %>% 
+  select(
+    Fecha,
+    RPE_diario
+  )
+
+```
+
+```{r other_grapish, echo=FALSE, include=TRUE}
+set.seed(123)
+
+# Datos largos para fatiga muscular
+datos_largo_fatiga_muscular <- pivot_longer(df_fatiga_muscular, cols = -Fecha, names_to = "variable", values_to = "valor")
+
+# Datos largos para fatiga nerviosa
+datos_largo_fatiga_nerviosa <- pivot_longer(df_fatiga_nerviosa, cols = -Fecha, names_to = "variable", values_to = "valor")
+
+# Combinar datos
+datos_combinados <- rbind(
+  mutate(datos_largo_fatiga_muscular, tipo_fatiga = "Daño muscular + Fatiga"),
+  mutate(datos_largo_fatiga_nerviosa, tipo_fatiga = "Fatiga de fuerza de voluntad")
+)
+
+# Gráfico combinado
+ggplot(datos_combinados, aes(x = Fecha, y = valor, color = tipo_fatiga, linetype = variable)) +
+  geom_smooth(method = "loess", span = 0.35, se = FALSE) +
+  geom_line() +
+  scale_x_date(date_breaks = "10 days", date_labels = "%Y-%m-%d") +
+  scale_color_manual(values = c("Daño muscular + Fatiga" = "lightblue", "Fatiga de fuerza de voluntad" = "blue")) +
+  scale_linetype_manual(values = c("solid", "solid")) +
+  labs(title = "Fatiga Muscular y Fatiga de fuerza de voluntad",
+       x = "Fecha",
+       y = "Valor",
+       color = "Tipo de Fatiga",
+       linetype = "Variable")
+
+```
+
+```{r rpe_grafico, echo=FALSE, include=TRUE}
+datos_largo_RPE_diario <- pivot_longer(df_rpe, cols = -Fecha, names_to = "variable", values_to = "valor")
+
+
+ggplot(datos_largo_RPE_diario, aes(x = Fecha, y = valor, color = variable)) +
+  geom_smooth(method = "loess", span = 0.35, se = FALSE) +  
+  geom_line() + 
+  scale_x_date(date_breaks = "10 days", date_labels = "%Y-%m-%d") +
+  scale_color_manual(values = c("blue"), labels = c("RPE")) +
+  labs(title = "RPE diario a lo largo de 2 meses y medio",
+       x = "Fecha",
+       y = "Valor",
+       color = "Variable")
+```
+
+Viendo ambos gráficos con detenimiento y si tomamos en cuenta el grafico teórico de supercompensación propuesto anteriormente, podemos ver cómo a lo largo de dos meses y medio, la planificación y monitoreo con planillas e índices claves, puede equilibrar eficientemente el balance entre estímulo de entrenamiento y recuperación el cual logre los resultados deseados por el alumno entrenado.
+
+# Aspectos mejorables del Framework
+
+Para un seguimiento más completo, se sugiere la incorporación de campos de gestión de fatiga incluso en los días en que no se realice ejercicio. Esto permitirá obtener una visión más precisa de la fatiga experimentada por el individuo a lo largo del tiempo.
+
+Además, el framework actual de entrenamiento no considera variables importantes como el NEAT (Non-Exercise Activity Thermogenesis, por sus siglas en inglés) de cada individuo y la fatiga mental derivada de las diversas actividades diarias. Estos elementos pueden tener un impacto significativo en el rendimiento y la capacidad de recuperación, por lo que sería beneficioso integrarlos en el análisis para una planificación más completa y efectiva del entrenamiento.
+
+# Glosario
+
+**Fatiga de fuerza de voluntad**: La fuerza de voluntad es agotadora, lo que evita que una persona logre ser constante en cierta conducta. En el caso de este informe, a la fatiga de fuerza de voluntad, la medimos sumando el sueño, el humor y el stress, factores fundamentales para lograr la intensidad esperada para un entrenamiento.
+
+**NEAT**: Se refiere a la energía que gastamos en actividades diarias que no son ejercicio físico planificado, como caminar, moverse, estar de pie, realizar tareas domésticas o laborales, etc.
