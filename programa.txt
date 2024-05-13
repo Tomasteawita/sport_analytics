@@ -1,0 +1,58 @@
+
+program colectivo_fotografistico
+type
+tipo_registro = titulo:string[75];
+            los demastipos de datos...
+
+tipo_vector = arr[200] of registro;
+//-------------------------------------------------------------------------
+
+
+
+
+procedure buscarTituloMaxClics(var maxTitulo: String; var maxClicks:ingteger; registro: tipo_registro):
+     Var
+        maxClicsTitulo:integer;
+     Begin
+        maxClicsTitulo := -100;
+        if maxClicsTitulo < registro.clics then
+            maxTitulo := registro.titulo;
+            maxClicsTitulo := registro.clics;
+    End
+
+
+procedure informarMetrica( var vectorPosteos: tipo_vector):
+    var
+        i:integer;
+        titulo:string;
+        maxClicks:ingteger;
+        cantidad_de_likes_de_jose:integer;
+    Begin
+        titulo := '';
+        maxClicks:= -100;
+        cantidad_de_likes_de_jose:= 0;
+        for i 1 to 200 do
+            buscarTituloMaxClics(titulo,maxClicks,vectorPosteos[2]);
+            
+        
+        writeln('El titulo .... tiene -..... cantidad de clicls')
+
+    End
+
+
+
+
+//----------------- PROGRAMA PRINCIPALL--------------------------------
+Var
+vector: tipo_vector;
+
+Begin
+leerPosteos(vector);
+informarMetricas(vector);
+End.
+
+
+
+
+
+
